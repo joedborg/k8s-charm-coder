@@ -1,0 +1,14 @@
+# Copyright 2021 Joseph Borg <joseph.borg@canonical.com>
+# See LICENSE file for licensing details.
+
+options:
+  password:
+    default: ""
+    description: The password to access the IDE. This is required.
+    type: string
+  external-hostname:
+    default: ""
+    description: |
+      The external hostname this application should be available on. If unset,
+      it will default to the deployed application name in the model.
+    type: string
