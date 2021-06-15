@@ -19,7 +19,7 @@ class TestCharm(unittest.TestCase):
 
     def test_config_changed(self):
         self.assertEqual(list(self.harness.charm._stored.things), [])
-        self.harness.update_config({"thing": "foo"})
+        self.harness.update_config({"password": "foo"})
         self.assertEqual(list(self.harness.charm._stored.things), ["foo"])
 
     def test_action(self):
@@ -35,32 +35,34 @@ class TestCharm(unittest.TestCase):
 
         self.assertEqual(action_event.fail.call_args, [("fail this",)])
 
-    def test_httpbin_pebble_ready(self):
+    def test_coder_pebble_ready(self):
         # Check the initial Pebble plan is empty
-        initial_plan = self.harness.get_container_pebble_plan("httpbin")
+        initial_plan = self.harness.get_container_pebble_plan("coder")
         self.assertEqual(initial_plan.to_yaml(), "{}\n")
         # Expected plan after Pebble ready with default config
         expected_plan = {
+            "summary": "coder layer",
+            "description": "pebble config layer for coder",
             "services": {
-                "httpbin": {
+                "coder": {
                     "override": "replace",
-                    "summary": "httpbin",
-                    "command": "gunicorn -b 0.0.0.0:80 httpbin:app -k gevent",
+                    "summary": "coder",
+                    "command": "code-server --bind-addr 0.0.0.0:8080",
                     "startup": "enabled",
-                    "environment": {"thing": "🎁"},
+                    "environment": {"PASSWORD": "foo"},
                 }
             },
         }
-        # Get the httpbin container from the model
-        container = self.harness.model.unit.get_container("httpbin")
-        # Emit the PebbleReadyEvent carrying the httpbin container
-        self.harness.charm.on.httpbin_pebble_ready.emit(container)
+        # Get the coder container from the model
+        container = self.harness.model.unit.get_container("coder")
+        # Emit the PebbleReadyEvent carrying the coder container
+        self.harness.charm.on.coder_pebble_ready.emit(container)
         # Get the plan now we've run PebbleReady
-        updated_plan = self.harness.get_container_pebble_plan("httpbin").to_dict()
+        updated_plan = self.harness.get_container_pebble_plan("coder").to_dict()
         # Check we've got the plan we expected
         self.assertEqual(expected_plan, updated_plan)
         # Check the service was started
-        service = self.harness.model.unit.get_container("httpbin").get_service("httpbin")
+        service = self.harness.model.unit.get_container("coder").get_service("coder")
         self.assertTrue(service.is_running())
         # Ensure we set an ActiveStatus with no message
         self.assertEqual(self.harness.model.unit.status, ActiveStatus())

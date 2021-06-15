@@ -62,7 +62,7 @@ class CoderCharm(CharmBase):
                 "coder": {
                     "override": "replace",
                     "summary": "coder",
-                    "command": "code-server -vvv --bind-addr 0.0.0.0:8080",
+                    "command": "code-server --bind-addr 0.0.0.0:8080",
                     "startup": "enabled",
                     "environment": {"PASSWORD": self.model.config.get("password")},
                 }
