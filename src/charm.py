@@ -62,7 +62,7 @@ class CoderCharm(CharmBase):
                 "coder": {
                     "override": "replace",
                     "summary": "coder",
-                    "command": "code-server | tee /out.log",
+                    "command": "code-server -vvv --bind-addr 0.0.0.0:8080",
                     "startup": "enabled",
                     "environment": {"PASSWORD": self.model.config.get("password")},
                 }
@@ -104,7 +104,12 @@ class CoderCharm(CharmBase):
         }
 
         if plan.services["environment"] != patch_layer["services"]["environment"]:
-            container.add_layer("pause", patch_layer, combine=True)
+            try:
+                container.add_layer("pause", patch_layer, combine=True)
+            except ConnectionError:
+                logger.info("Pebble API not yet ready, waiting...")
+                event.defer()
+                return
 
             if service.is_running():
                 container.stop("pause")
