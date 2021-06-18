@@ -14,9 +14,9 @@ from ops.model import ActiveStatus, BlockedStatus, ModelError
 logger = logging.getLogger(__name__)
 
 
-class CoderCharm(CharmBase):
+class CoderOperator(CharmBase):
     """
-    Charm the service.
+    Operator Charm the service.
     """
 
     _stored = StoredState()
@@ -119,4 +119,4 @@ class CoderCharm(CharmBase):
 
 
 if __name__ == "__main__":
-    main(CoderCharm)
+    main(CoderOperator)
