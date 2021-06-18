@@ -1,4 +1,0 @@
-action: unit, msg: getenv
-cwd: /home/joe/Projects/charms/operators/coder/.tox
-cmd: /usr/bin/python3 -m virtualenv --no-download --python /usr/bin/python3 unit
-ModuleNotFoundError: No module named 'virtualenv.seed.via_app_data'
