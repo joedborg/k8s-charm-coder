@@ -30,14 +30,14 @@ def test_invalid_config(harness):
     assert isinstance(harness.charm.unit.status, BlockedStatus)
 
 
-def test_register_monitoring(harness):
+def test_register_ingress(harness):
     harness.set_leader(True)
     harness.begin()
     rid = harness.add_relation("ingress", "ingress")
     rel = harness.model.get_relation("ingress", rid)
     harness.add_relation_unit(rid, "ingress/0")
     assert rel.data[harness.charm.app] == {
-        "service-hostname": harness._external_hostname,
-        "service-name": harness.app.name,
+        "service-hostname": "coder.juju",
+        "service-name": "coder",
         "service-port": 8080,
     }
